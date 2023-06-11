@@ -7,6 +7,7 @@ import Button from "@/components/ui/button";
 import ErrorAlert from "@/components/ui/error-alert";
 import useSWR from 'swr';
 import axios from "axios";
+import Head from "next/head";
 
 // const fetchDataFromFirebase = async ()=>{
 //     const res = await axios.get('https://nextjs-project-dc5d4-default-rtdb.asia-southeast1.firebasedatabase.app/events.json'); 
@@ -23,7 +24,7 @@ const FilteredEvenetsPage = (props) => {
   //console.log('filterData::',filterData);
   const fetcher = async (url) => await axios.get(url).then((res) => res.data);
   const {data,error} = useSWR('https://nextjs-project-dc5d4-default-rtdb.asia-southeast1.firebasedatabase.app/events.json',fetcher);
-  console.log('DATA==>',data);
+  //console.log('DATA==>',data);
   useEffect(()=>{
     if(data){
       const events = [];
@@ -38,6 +39,12 @@ const FilteredEvenetsPage = (props) => {
     }
   },[data]);
 
+  let pageHeader = <Head>
+    <title>Filtered Events</title>
+    <meta name="description"
+        content="A list of filtered events"/>
+  </Head>
+
   if (!loadedEvents) {
     return <p className="center">Loading...</p>;
   }
@@ -47,6 +54,14 @@ const FilteredEvenetsPage = (props) => {
 
   const numYear = +filteredYear;
   const numMonth = +filteredMonth;
+
+  pageHeader = <Head>
+  <title>Filtered Events</title>
+  <meta
+    name='description'
+    content={`All Events for ${numMonth}/${numYear}`}
+     />
+</Head>
 
   if (     
     isNaN(numYear) ||
@@ -90,6 +105,7 @@ const FilteredEvenetsPage = (props) => {
   const date = new Date(numYear,numMonth);
 
   return <Fragment>
+     {pageHeader}
     <ResultsTitle date={date}/>
     <EventList items={filteredEvents}/>
   </Fragment>
